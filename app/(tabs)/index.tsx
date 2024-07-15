@@ -7,7 +7,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  FlatList,
 } from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
@@ -17,9 +16,8 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { getColumnCount, hp, wp } from "@/helpers/common";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { getItems } from "@/redux/slice/itemSlice";
-import { truncateTitle } from "@/config/utils";
 import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 
 // const dimension=
@@ -49,26 +47,56 @@ const Section: React.FC<SectionProps> = ({
 
 export default function HomeScreen() {
   const dispatch = useAppDispatch();
-  const columns = getColumnCount();
-  const { items, page, status, error } = useAppSelector((state) => state.items);
+  const columns = useMemo(() => getColumnCount(), []);
+  const { items, status, error, totalItems } = useAppSelector(
+    (state) => state.items
+  );
+  // const { items, page, status, error } = useAppSelector((state) => state.items);
+  const [isEndReached, setIsEndReached] = useState(false);
+  const [page, setPage] = useState(1);
+  console.log(page);
   useEffect(() => {
-    dispatch(getItems());
-  }, [dispatch]);
+    dispatch(getItems(page));
+  }, [dispatch, page]);
+  const handleLoadMore = () => {
+    dispatch(getItems(page + 1));
+  };
   const loadMoreItems = () => {
     if (status === "idle" || status === "succeeded") {
-      dispatch(getItems());
+      if (totalItems <= items.length) return;
+      setPage(page + 1);
+
+      dispatch(getItems(page));
     }
   };
   const scrollRef = useRef(null);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    console.log("Scroll Event Fired", event.nativeEvent.contentOffset);
+    const { contentSize, layoutMeasurement, contentOffset } = event.nativeEvent;
+    const contentHeight = contentSize.height;
+    const scrollHeight = layoutMeasurement.height;
+    const offsetY = contentOffset.y;
+    const bottomPosition = contentHeight - scrollHeight;
+
+    // if (contentHeight - scrollHeight - offsetY < 100) {
+    //   loadMoreItems();
+    // }
+
+    if (offsetY >= bottomPosition - 1) {
+      if (!isEndReached) {
+        setIsEndReached(true);
+      }
+    } else if (isEndReached) {
+      setIsEndReached(false);
+      loadMoreItems();
+      // console.log("End reached reset");
+    }
   };
 
   return (
     <ThemedView style={styles.section}>
-     <SafeAreaView>
-        <ScrollView>
+      <SafeAreaView>
+        <ScrollView onScroll={handleScroll}>
           <Section title="Tendance">
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
@@ -83,15 +111,20 @@ export default function HomeScreen() {
               ))}
             </ScrollView>
           </Section>
-          <View style={styles.flashListContainer}>
-            <Section title="Votre Zando">
+          <Section title="Votre Zando">
+            <View
+              style={[
+                styles.flashListContainer,
+                { width: Dimensions.get("screen").width },
+              ]}
+            >
               {items && (
                 <MasonryFlashList
                   data={items}
                   numColumns={columns}
                   onScroll={handleScroll}
-
-                  estimatedItemSize={Dimensions.get("window").width / columns}
+                  // estimatedItemSize={Dimensions.get("window").width / columns}
+                  estimatedItemSize={200}
                   renderItem={({ item, index }) => (
                     <TouchableOpacity style={styles.cardItems}>
                       <View style={styles.cardProfiles}>
@@ -117,8 +150,8 @@ export default function HomeScreen() {
                   )}
                 />
               )}
-            </Section>
-          </View>
+            </View>
+          </Section>
           {/* <MyComponent /> */}
         </ScrollView>
       </SafeAreaView>
@@ -202,6 +235,7 @@ const styles = StyleSheet.create({
   },
 
   flashListContainer: {
-    flex: 1,
+    // flex: 1,
+    minHeight: 3,
   },
 });

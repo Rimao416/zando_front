@@ -9,19 +9,22 @@ interface ItemState {
   page: number;
   status: string;
   error: null | string;
+  totalItems: number;
 }
 const initialState: ItemState = {
   items: [],
   page: 1,
   status: "idle",
   error: null,
+  totalItems: 0,
 };
-export const getItems = createAsyncThunk<any>(
+
+export const getItems = createAsyncThunk<any, number>(
   "items/getItems",
-  async (_, { rejectWithValue }) => {
-    const response = await API.get("/api/v1/items");
+  async (page: number, { rejectWithValue }) => {
     try {
-      return response.data.data;
+      const response = await API.get(`/api/v1/items?page=${page}`);
+      return response.data;
     } catch (err: any) {
       return rejectWithValue(err.response.data);
     }
@@ -46,7 +49,9 @@ export const itemSlice = createSlice({
       })
       .addCase(getItems.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.items = [...state.items, ...action.payload];
+        state.items = [...state.items, ...action.payload.data];
+        // state.page += 1;
+        state.totalItems = action.payload.totalItems;
       })
       .addCase(getItems.rejected, (state) => {
         state.status = "failed";
