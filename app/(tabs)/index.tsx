@@ -17,9 +17,10 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { getColumnCount, hp, wp } from "@/helpers/common";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { getItems } from "@/redux/slice/itemSlice";
 import { truncateTitle } from "@/config/utils";
+import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 
 // const dimension=
 interface SectionProps {
@@ -58,10 +59,15 @@ export default function HomeScreen() {
       dispatch(getItems());
     }
   };
+  const scrollRef = useRef(null);
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    console.log("Scroll Event Fired", event.nativeEvent.contentOffset);
+  };
 
   return (
     <ThemedView style={styles.section}>
-      <SafeAreaView>
+     <SafeAreaView>
         <ScrollView>
           <Section title="Tendance">
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -77,41 +83,42 @@ export default function HomeScreen() {
               ))}
             </ScrollView>
           </Section>
-          <Section title="Votre Zando">
-            {items && (
-              <MasonryFlashList
-                data={items}
-                numColumns={columns}
-                // onEndReached={loadMoreItems}
-                // onEndReachedThreshold={0.5}
-                estimatedItemSize={Dimensions.get("window").width / columns}
-                
-                renderItem={({ item, index }) => (
-                  <TouchableOpacity style={styles.cardItems}>
-                    <View style={styles.cardProfiles}>
-                      <View style={styles.cardProfilesWrapper}>
-                        <Image
-                          source={{ uri: item?.seller.avatar }}
-                          style={styles.cardImageProfile}
-                        />
+          <View style={styles.flashListContainer}>
+            <Section title="Votre Zando">
+              {items && (
+                <MasonryFlashList
+                  data={items}
+                  numColumns={columns}
+                  onScroll={handleScroll}
 
-                        <Text style={styles.cardProfileText}>
-                          {item?.seller.username}
-                        </Text>
+                  estimatedItemSize={Dimensions.get("window").width / columns}
+                  renderItem={({ item, index }) => (
+                    <TouchableOpacity style={styles.cardItems}>
+                      <View style={styles.cardProfiles}>
+                        <View style={styles.cardProfilesWrapper}>
+                          <Image
+                            source={{ uri: item?.seller.avatar }}
+                            style={styles.cardImageProfile}
+                          />
+
+                          <Text style={styles.cardProfileText}>
+                            {item?.seller.username}
+                          </Text>
+                        </View>
                       </View>
-                    </View>
-                    <Image
-                      source={{ uri: item.media[0].url }}
-                      style={styles.cardImageItems}
-                    />
-                    {/* <Text style={styles.cardText}>
+                      <Image
+                        source={{ uri: item.media[0].url }}
+                        style={styles.cardImageItems}
+                      />
+                      {/* <Text style={styles.cardText}>
                       {truncateTitle(item.title)}
                     </Text> */}
-                  </TouchableOpacity>
-                )}
-              />
-            )}
-          </Section>
+                    </TouchableOpacity>
+                  )}
+                />
+              )}
+            </Section>
+          </View>
           {/* <MyComponent /> */}
         </ScrollView>
       </SafeAreaView>
@@ -192,5 +199,9 @@ const styles = StyleSheet.create({
   cardText: {
     fontWeight: "bold",
     marginTop: 10,
+  },
+
+  flashListContainer: {
+    flex: 1,
   },
 });
