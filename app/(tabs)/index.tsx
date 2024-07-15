@@ -12,6 +12,7 @@ import {
 import { HelloWave } from "@/components/HelloWave";
 import { MasonryFlashList } from "@shopify/flash-list";
 import { ThemedText as Text } from "@/components/ThemedText";
+import { Text as Test } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { getColumnCount, hp, wp } from "@/helpers/common";
@@ -19,6 +20,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { getItems } from "@/redux/slice/itemSlice";
 import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import ItemBottomSheetModal from "../components/ItemBottomSheetModal";
 
 // const dimension=
 interface SectionProps {
@@ -51,6 +54,10 @@ export default function HomeScreen() {
   const { items, status, error, totalItems } = useAppSelector(
     (state) => state.items
   );
+  const bottomSheetRefItems = useRef<BottomSheetModal>(null);
+  const handleItemPress = () => {
+    bottomSheetRefItems.current?.present();
+  };
   // const { items, page, status, error } = useAppSelector((state) => state.items);
   const [isEndReached, setIsEndReached] = useState(false);
   const [page, setPage] = useState(1);
@@ -126,7 +133,10 @@ export default function HomeScreen() {
                   // estimatedItemSize={Dimensions.get("window").width / columns}
                   estimatedItemSize={200}
                   renderItem={({ item, index }) => (
-                    <TouchableOpacity style={styles.cardItems}>
+                    <TouchableOpacity
+                      style={styles.cardItems}
+                      onPress={handleItemPress}
+                    >
                       <View style={styles.cardProfiles}>
                         <View style={styles.cardProfilesWrapper}>
                           <Image
@@ -155,6 +165,7 @@ export default function HomeScreen() {
           {/* <MyComponent /> */}
         </ScrollView>
       </SafeAreaView>
+      <ItemBottomSheetModal bottomSheetRefItem={bottomSheetRefItems} />
     </ThemedView>
   );
 }
