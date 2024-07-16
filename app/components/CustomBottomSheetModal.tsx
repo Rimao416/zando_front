@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet, useColorScheme } from "react-native";
+import { Text, StyleSheet, useColorScheme } from "react-native";
 import React, { forwardRef, useCallback, useMemo } from "react";
 import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { ThemedView as View } from "@/components/ThemedView";
 // import Colors from "@/constants/Colors";
 
 interface Props {
@@ -57,7 +58,7 @@ const CustomBottomSheetModal = forwardRef<Ref, Props>((props, ref) => {
       handleComponent={null}
       handleIndicatorStyle={{ display: "none" }}
     >
-      <View style={{ position: "relative" }}>{props.children}</View>
+      <View style={{ position: "relative", flex: 1 }}>{props.children}</View>
     </BottomSheetModal>
   );
 });

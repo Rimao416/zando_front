@@ -12,7 +12,6 @@ import {
 import { HelloWave } from "@/components/HelloWave";
 import { MasonryFlashList } from "@shopify/flash-list";
 import { ThemedText as Text } from "@/components/ThemedText";
-import { Text as Test } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { getColumnCount, hp, wp } from "@/helpers/common";
@@ -22,6 +21,7 @@ import { getItems } from "@/redux/slice/itemSlice";
 import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import ItemBottomSheetModal from "../components/ItemBottomSheetModal";
+import { Item } from "@/interfaces/Item";
 
 // const dimension=
 interface SectionProps {
@@ -54,8 +54,10 @@ export default function HomeScreen() {
   const { items, status, error, totalItems } = useAppSelector(
     (state) => state.items
   );
+  const [sheetItem, setSheetItem] = useState<Item | null>(null);
   const bottomSheetRefItems = useRef<BottomSheetModal>(null);
-  const handleItemPress = () => {
+  const handleItemPress = (item: Item) => {
+    setSheetItem(item);
     bottomSheetRefItems.current?.present();
   };
   // const { items, page, status, error } = useAppSelector((state) => state.items);
@@ -135,7 +137,7 @@ export default function HomeScreen() {
                   renderItem={({ item, index }) => (
                     <TouchableOpacity
                       style={styles.cardItems}
-                      onPress={handleItemPress}
+                      onPress={() => handleItemPress(item)}
                     >
                       <View style={styles.cardProfiles}>
                         <View style={styles.cardProfilesWrapper}>
@@ -165,7 +167,9 @@ export default function HomeScreen() {
           {/* <MyComponent /> */}
         </ScrollView>
       </SafeAreaView>
-      <ItemBottomSheetModal bottomSheetRefItem={bottomSheetRefItems} />
+      <ItemBottomSheetModal bottomSheetRefItem={bottomSheetRefItems} 
+      item={sheetItem}
+      />
     </ThemedView>
   );
 }
