@@ -5,7 +5,9 @@ import CustomBottomSheetModal from "./CustomBottomSheetModal";
 import { Item } from "@/interfaces/Item";
 import { ThemedText as Text } from "@/components/ThemedText";
 import Carousel from "react-native-reanimated-carousel";
-import { wp } from "@/helpers/common";
+import { hp, wp } from "@/helpers/common";
+import { Colors } from "@/constants/Colors";
+import { truncateTitle } from "@/config/utils";
 
 interface ItemBottomSheetModalProps {
   bottomSheetRefItem: React.RefObject<BottomSheetModal>;
@@ -16,56 +18,100 @@ const ItemBottomSheetModal: React.FC<ItemBottomSheetModalProps> = ({
   item,
 }) => {
   const width = Dimensions.get("window").width;
-  console.log(item);
   return (
     <CustomBottomSheetModal ref={bottomSheetRefItem}>
       <View style={styles.header}>
         <Carousel
           width={width}
-          height={wp(100)}
-          autoPlay={false}
-          data={item?.media || []} // Assurez-vous que data est un tableau
-          onSnapToItem={(index) => console.log("current index:", index)}
+          data={item?.media || []}
           renderItem={({ item: mediaItem, index }) => (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-              }}
-            >
-              <Image
-                source={{ uri: mediaItem.url }}
-                style={[styles.headerImage, { width: "100%", height: "100%" }]}
-                resizeMode="cover"
-              />
-            </View>
+            <Image
+              source={{ uri: mediaItem.url }}
+              style={[styles.headerImage, { width: "100%", height: "100%" }]}
+              resizeMode="cover"
+            />
           )}
         />
       </View>
       <View style={styles.body}>
-        <ScrollView style={styles.bodyCategories}>
+        <ScrollView
+          style={styles.bodyCategories}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
           {item?.categories.map((category, index) => (
-            <View key={index}>
-              <Text>{category.name}</Text>
+            <View key={index} style={styles.bodycategoryItem}>
+              <Text style={styles.bodyCategoryItemText}>{category.name}</Text>
             </View>
           ))}
         </ScrollView>
+        <View style={styles.product}>
+          {item?.title && <Text type="subtitle">{item.title}</Text>}
+          {item?.price && (
+            <Text type="default" style={styles.productPrice}>
+              {item.price} Fc
+            </Text>
+          )}
+          <View style={styles.productDescription}>
+              <Text type="subtitle" style={styles.productDescriptionTitle}>
+                Description
+              </Text>
+            {item?.description && (
+              <Text style={styles.productDescriptionText}>
+                ({truncateTitle(item.description, 100)})
+              </Text>
+            )}
+            <Text>{item?.condition === "new" ? "Neuf" : "Déjà Utilisé"}</Text>
+          </View>
+        </View>
       </View>
     </CustomBottomSheetModal>
   );
 };
 const styles = StyleSheet.create({
-  // headerImage:{
-  //   borderBottomLeftRadius: 30,
-  //   borderBottomRightRadius: 30,
-  // }
-  header: {},
+  headerImage: {
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+  },
+  header: {
+    position: "relative",
+    height: hp(40),
+  },
+  bodyCategories: {},
   body: {
     position: "relative",
-    backgroundColor: "red",
+    marginTop: 15,
+    paddingHorizontal: 15,
   },
+  bodycategoryItem: {
+    marginRight: 10,
+    backgroundColor: Colors.violet,
+    padding: 5,
+    borderRadius: 5,
+  },
+  bodyCategoryItemText: {
+    color: Colors.violet_dark,
+    fontWeight: "700",
+  },
+  product: {
+    marginTop: 15,
+  },
+  productTitle: {
+    fontSize: 20,
+    fontWeight: 700,
+  },
+  productPrice: {
+    color: "rgb(99,95,94)",
+  },
+  productDescription: {
+    marginTop: 10,
+  },
+  productDescriptionTitle:{
 
-  bodyCategories: {},
+  },
+  productDescriptionText: {
+    color: "rgb(99,95,94)",
+  },
 });
 
 export default ItemBottomSheetModal;

@@ -25,4 +25,5 @@ export const Colors = {
   },
   blue: "rgb(98,48,233)",
   violet: "rgb(224,220,250)",
+  violet_dark: "rgb(90,62, 255)",
 };

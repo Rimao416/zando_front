@@ -1,6 +1,6 @@
-export const truncateTitle = (title: string) => {
-  if (title.length > 15) {
-    return title.slice(0, 15) + "...";
+export const truncateTitle = (title: string, limit: number = 20) => {
+  if (title.length > limit) {
+    return title.slice(0, limit) + "...";
   }
   return title;
 };
