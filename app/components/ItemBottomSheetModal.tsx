@@ -53,15 +53,22 @@ const ItemBottomSheetModal: React.FC<ItemBottomSheetModalProps> = ({
             </Text>
           )}
           <View style={styles.productDescription}>
-              <Text type="subtitle" style={styles.productDescriptionTitle}>
-                Description
-              </Text>
+            <Text type="subtitle" style={styles.productDescriptionTitle}>
+              Description
+            </Text>
             {item?.description && (
               <Text style={styles.productDescriptionText}>
                 ({truncateTitle(item.description, 100)})
               </Text>
             )}
             <Text>{item?.condition === "new" ? "Neuf" : "Déjà Utilisé"}</Text>
+          </View>
+          <View style={styles.separator}></View>
+          <View style={styles.productAuthorWrapper}>
+            <Image source={{ uri: item?.seller?.avatar }} style={styles.productAuthorAvatar} />
+            <Text type="subtitle">{item?.seller?.username}</Text>
+
+
           </View>
         </View>
       </View>
@@ -106,11 +113,26 @@ const styles = StyleSheet.create({
   productDescription: {
     marginTop: 10,
   },
-  productDescriptionTitle:{
-
-  },
+  productDescriptionTitle: {},
   productDescriptionText: {
     color: "rgb(99,95,94)",
+  },
+  productAuthorWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 14,
+  },
+  productAuthorAvatar: {
+    width: wp(12),
+    height: hp(6),
+    borderRadius: 50,
+
+  },
+  separator: {
+    marginTop: 10,
+    height: 1,
+    backgroundColor: "#ccc",
+    width: "100%",
   },
 });
 
