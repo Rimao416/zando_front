@@ -80,7 +80,7 @@ const AnimatedInput: React.FC<AnimatedInputProps> = ({
 
 const styles = StyleSheet.create({
   inputContainer: {
-    marginBottom: 20,
+    // marginBottom: 20,
     position: "relative",
     borderBottomWidth: 1,
     borderColor: Colors.gray_twitter,

@@ -17,6 +17,7 @@ import { store } from "../redux/store";
 import { Provider } from "react-redux";
 import { Button, TouchableOpacity } from "react-native";
 import { Colors } from "@/constants/Colors";
+import Progress from "./components/Progress";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -56,7 +57,7 @@ export default function RootLayout() {
                 name="(auth)/sign"
                 options={{
                   headerShown: true, // Pour montrer le header
-                  headerTitle: "Créer un compte", // Titre du header
+                  headerTitle: () => <Progress />, // Titre du header
                   headerStyle: {
                     backgroundColor: Colors[colorScheme ?? "light"].background, // Couleur de fond du header
                   },
@@ -64,7 +65,31 @@ export default function RootLayout() {
                   headerTitleStyle: {
                     fontWeight: "bold", // Style du texte du titre
                   },
-               
+
+                  headerLeft: () => (
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                      <MaterialIcons
+                        name="arrow-back-ios"
+                        size={24}
+                        color={Colors[colorScheme ?? "light"].text}
+                      />
+                    </TouchableOpacity>
+                  ),
+                }}
+              />
+              <Stack.Screen
+                name="(auth)/signOtp"
+                options={{
+                  headerShown: true, // Pour montrer le header
+                  headerTitle: () => <Progress />, // Titre du header
+                  headerStyle: {
+                    backgroundColor: Colors[colorScheme ?? "light"].background, // Couleur de fond du header
+                  },
+                  headerTintColor: Colors[colorScheme ?? "light"].text, // Couleur du texte du header
+                  headerTitleStyle: {
+                    fontWeight: "bold", // Style du texte du titre
+                  },
+
                   headerLeft: () => (
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                       <MaterialIcons
