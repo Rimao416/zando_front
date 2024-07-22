@@ -9,6 +9,7 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
+import { Link } from "expo-router";
 import { ThemedView } from "@/components/ThemedView";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/constants/Colors";
@@ -58,9 +59,7 @@ const Login = () => {
         <LinearGradient
           colors={[
             colorScheme === "dark" ? "rgba(0,0,0,0)" : "rgba(255,255,255,0)",
-            colorScheme === "dark"
-              ? "rgba(0,0,0,0.5)"
-              : "rgba(255,255,255,0.5)",
+            Colors[colorScheme ?? "light"].background,
             Colors[colorScheme ?? "light"].background,
             Colors[colorScheme ?? "light"].background,
           ]}
@@ -69,26 +68,90 @@ const Login = () => {
           end={{ x: 0.5, y: 0.8 }}
         >
           <View style={styles.textContainer}>
-            <Image source={require("../assets/images/logo.png")} style={styles.logo} />
+            <Image source={require("../assets/images/logo.png")} />
             <Text type="title">Bienvenue sur Zando</Text>
             <View style={styles.button}>
               <TouchableOpacity
-                style={[{ backgroundColor: Colors.main }, styles.buttonWrapper]}
+                style={[
+                  {
+                    backgroundColor: "white",
+                    borderColor: Colors.gray,
+                    borderWidth: 1,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  },
+                  styles.buttonWrapper,
+                ]}
               >
-                <Text style={[{ color: "white" }, styles.buttonText]}>
-                  S'inscrire
+                <Image
+                  source={require("../assets/images/google.png")}
+                  style={styles.buttonImage}
+                />
+                <Text style={[{ color: "black" }, styles.buttonText]}>
+                  Continuer avec Google
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[{ backgroundColor: Colors.gray }, styles.buttonWrapper]}
+                style={[
+                  {
+                    backgroundColor: "white",
+                    borderColor: Colors.gray,
+                    borderWidth: 1,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  },
+                  styles.buttonWrapper,
+                ]}
               >
-                <Text style={[{ color: "black" }, styles.buttonText]}>Se connecter</Text>
+                <Image
+                  source={require("../assets/images/facebook.png")}
+                  style={styles.buttonImage}
+                />
+                <Text style={[{ color: "black" }, styles.buttonText]}>
+                  Continuer avec Facebook
+                </Text>
               </TouchableOpacity>
+              <View style={styles.seperatorView}>
+                <View
+                  style={{
+                    flex: 1,
+                    borderBottomColor: Colors.gray,
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                  }}
+                />
+                <Text style={styles.seperator}>ou</Text>
+                <View
+                  style={{
+                    flex: 1,
+                    borderBottomColor: Colors.gray,
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                  }}
+                />
+              </View>
+              <Link href="/(auth)/sign" asChild style={[
+                    { backgroundColor: Colors.main },
+                    styles.buttonWrapper,
+                  ]}>
+                <TouchableOpacity
+                  
+                >
+                  <Text style={[{ color: "white" }, styles.buttonText]}>
+                    Créer un compte
+                  </Text>
+                </TouchableOpacity>
+              </Link>
             </View>
             <Text style={styles.textConfidentialite}>
               En continuant, vous acceptez les Conditions d’utilisation de Zando
               et reconnaissez avoir lu notre Politique de confidentialité.
               Informations concernant la collecte de données
+            </Text>
+
+            <Text>
+              Vous avez déjà un compte ?{" "}
+              <Text style={{ color: Colors.violet_dark }}>Connectez-vous</Text>{" "}
             </Text>
           </View>
         </LinearGradient>
@@ -148,9 +211,22 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   textConfidentialite: {
-    textAlign: "center",
+    textAlign: "left",
     fontSize: 12,
     lineHeight: 14,
-    marginBottom: 10,
+  },
+  buttonImage: {
+    width: 20,
+    height: 20,
+  },
+  seperatorView: {
+    flexDirection: "row",
+    alignItems: "center",
+    // marginVertical: 30,
+  },
+  seperator: {
+    // color: Colors.gray,
+    // fontSize: 16,
+    marginHorizontal: 8,
   },
 });

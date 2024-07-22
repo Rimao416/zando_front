@@ -27,4 +27,5 @@ export const Colors = {
   violet: "rgb(224,220,250)",
   violet_dark: "rgb(90,62, 255)",
   gray: "rgb(239,239,239)",
+  gray_twitter: "rgb(94,101,107)",
 };
